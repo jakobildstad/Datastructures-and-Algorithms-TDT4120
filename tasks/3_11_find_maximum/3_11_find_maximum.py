@@ -25,95 +25,26 @@ n_upper = 100
 seed = 42
 
 def find_maximum(x):
-    """
-    Finner maksimum i en rotert unimodal tabell uten å endre den.
-    Returnerer None for tom input.
-
-    Løkkeinvariant: Maksimum finnes alltid i x[l..r].
-
-    Vi vurderer endenes retning på nytt for hvert søkeområde:
-
-    1. Begge ender stiger innover:
-       Området inneholder en topp. Følg stigningen fra midten.
-
-    2. Begge ender synker innover:
-       Maksimum må være et av endepunktene.
-
-    3. Én ende stiger innover, den andre synker:
-       Området kan inneholde både en bunn og en topp.
-
-       a) Venstre ende stiger innover:
-          - Midten synker mot høyre: Søk venstre.
-          - Midten stiger mot høyre: Sammenlign med x[l].
-            Er x[mid] < x[l], er midten etter bunnen: Søk venstre.
-            Ellers er midten før toppen: Søk høyre.
-
-       b) Høyre ende stiger innover:
-          - Midten stiger mot høyre: Søk høyre.
-          - Midten synker mot høyre: Sammenlign med x[r].
-            Er x[mid] < x[r], er midten før bunnen: Søk høyre.
-            Ellers er midten etter toppen: Søk venstre.
-
-    Hvis midten selv er toppen, returnerer vi den.
-    Hvis midten er bunnen, søker vi mot det største endepunktet.
-
-    Hvert søketrinn forkaster omtrent halvparten av området.
-    Verste kjøretid: Theta(log n). Ekstra plass: O(1).
-    """
-    if len(x) == 0:
+    if not x:
         return None
 
     l, r = 0, len(x) - 1
 
-    # Med minst fire elementer ligger midtens naboer innenfor området.
-    while r - l > 2:
-        left_growing_inward = x[l] < x[l + 1]
-        right_growing_inward = x[r] < x[r - 1]
-
-        # Tilfelle 2: Maksimum er et endepunkt.
-        if not left_growing_inward and not right_growing_inward:
-            return max(x[l], x[r])
-
+    while l < r:
         mid = (l + r) // 2
 
-        mid_growing_right = x[mid] < x[mid + 1]
-        mid_growing_left = x[mid] < x[mid - 1]
-
-        # Midten er en topp.
-        if not mid_growing_left and not mid_growing_right:
-            return x[mid]
-
-        # Midten er en bunn.
-        if mid_growing_left and mid_growing_right:
-            if x[r] > x[l]:
+        if x[l] < x[r]:
+            if x[mid] > x[mid + 1] and x[mid] > x[r]:
+                r = mid
+            else:
+                l = mid + 1
+        else:
+            if x[mid] < x[mid + 1] and x[mid] > x[l]:
                 l = mid + 1
             else:
-                r = mid - 1
-            continue
+                r = mid
 
-        # Utgangspunkt: Følg stigningen.
-        direction_right = mid_growing_right
-
-        # Tilfelle 3: Nøyaktig én ende stiger innover.
-        if left_growing_inward != right_growing_inward:
-
-            # Stigende midtparti kan være før toppen eller etter bunnen.
-            if direction_right and left_growing_inward:
-                if x[mid] < x[l]:
-                    direction_right = False
-
-            # Synkende midtparti kan være før bunnen eller etter toppen.
-            elif not direction_right and right_growing_inward:
-                if x[mid] < x[r]:
-                    direction_right = True
-
-        if direction_right:
-            l = mid + 1
-        else:
-            r = mid - 1
-
-    # Bare 1–3 elementer gjenstår, så dette tar konstant tid.
-    return max(x[i] for i in range(l, r + 1))
+    return x[l]
         
 
 

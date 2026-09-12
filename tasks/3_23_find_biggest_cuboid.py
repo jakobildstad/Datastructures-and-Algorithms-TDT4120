@@ -33,21 +33,22 @@ seed = 0
 
 
 
-def largest_cuboid(x):
+def largest_cuboid(x): # O(n^3)
     max_volume = 0
     n = len(x)
     
-    for row_a in range(n):
+    for row_a in range(n): # O(n^2)
         lowest = [float("inf")] * n
 
         for row_b in range(row_a, n):
-            lowest = _lowest_depths(x, row_b, lowest)
-            area = _largest_sum_of_subarray(lowest)
+            lowest = _lowest_depths(x, row_b, lowest) # O(n)
+            area = _largest_sum_of_subarray(lowest) # O(n)
 
             volume = (row_b - row_a + 1) * area
             max_volume = max(max_volume, volume)
 
     return max_volume
+
 
 def _lowest_depths(x, row_b, previous_lowest):
 

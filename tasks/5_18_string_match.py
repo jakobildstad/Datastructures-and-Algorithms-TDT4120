@@ -35,36 +35,41 @@ seed = 0
 
 def string_match(dna, segments):
     count = 0
-    len_dna = len(dna)
-    for segment in segments:
-        len_segment = len(segment)
-        if len_segment >= len_dna:
-            continue
-        l = 0
-        r = len_segment - 1
-        while r < len_dna:
-            if segment == dna[l:r + 1]:
-                count += 1
-            l += 1
-            r += 1
+    root = build_tree(segments)
+    n = len(dna)
+    d = max((len(segment) for segment in segments), default=0)
+
+    for start in range(n):
+        node = root
+        for i in range(start, min(start + d, n)):
+            node = node.children.get(dna[i])
+            if node is None:
+                break
+            count += node.count
+
     return count
 
 
-
-
-
-
-
-
-
 def search_tree(root, dna):
-    # Skriv din kode her (hvis du skal bruke denne funksjonen)
-    pass
+    if not dna:
+        return root.count
+    if dna in root.children:
+        return root.children[dna].count
+    if dna[0] in root.children:
+        return search_tree(root.children[dna[0]], dna[1:])
+    return 0
 
 
 def build_tree(dna_sequences):
-    # Skriv din kode her (hvis du skal bruke denne funksjonen)
-    pass
+    root = Node()
+    for dna_sequence in dna_sequences:
+        node = root
+        for char in dna_sequence:
+            if char not in node.children:
+                node.children[char] = Node()
+            node = node.children[char]
+        node.count += 1
+    return root
 
 
 class Node:

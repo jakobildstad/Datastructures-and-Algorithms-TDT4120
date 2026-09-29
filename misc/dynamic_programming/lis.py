@@ -18,10 +18,7 @@ def longest_increasing_subsequence(arr):
     dp[0] = 1
 
     for i in range(1, n):
-        candidates = [0]
-        for j in range(0, i):
-            if arr[j] < arr[i]:
-                candidates.append(dp[j])
+        candidates = [dp[j] for j in range(0, i) if arr[j] < arr[i]]
         dp[i] = max(candidates) + 1
 
-    return max(candidates)
+    return max(dp)
